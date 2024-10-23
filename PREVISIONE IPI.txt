@@ -13,7 +13,7 @@ data$Tempo <- as.Date(paste0(data$Tempo, "-01"), format = "%Y-%m-%d")
 # Assicura che i dati siano ordinati per 'Tempo'
 data <- data[order(data$Tempo), ]
 
-# Crea l'oggetto serie temporale
+# Crea l'oggetto serie storica
 start_year <- as.numeric(format(min(data$Tempo), "%Y"))
 start_month <- as.numeric(format(min(data$Tempo), "%m"))
 ts_data <- ts(data$IPI, start = c(start_year, start_month), frequency = 12)
