@@ -17,7 +17,7 @@ dati$Tempo <- as.yearqtr(dati$Tempo, format = "%Y-Q%q")
 # Assicura che i dati siano ordinati per 'Tempo'
 dati <- dati[order(dati$Tempo), ]
 
-# Crea l'oggetto serie temporale
+# Crea l'oggetto serie storica
 anno_inizio <- as.numeric(format(min(dati$Tempo), "%Y"))
 trimestre_inizio <- as.numeric(format(min(dati$Tempo), "%q"))
 ts_dati <- ts(dati$PIL, start = c(anno_inizio, trimestre_inizio), frequency = 4)
