@@ -1,0 +1,1 @@
+Queste sono le mie applicazioni del pacchetto forecast di R per eseguire un esperimento di Rolling forecasting a finestra sia espandibile che a lugnhezza fissa (10 anni) in modo da capire che modello, tra ARIMA ed ETS si adatti meglio alle serie storiche di PIL e IPI
