@@ -13,7 +13,7 @@ data$Tempo <- as.Date(paste0(data$Tempo, "-01"), format = "%Y-%m-%d")
 # Assicura che i dati siano ordinati per 'Tempo'
 data <- data[order(data$Tempo), ]
 
-# Crea l'oggetto serie temporale
+# Crea l'oggetto serie storica
 start_year <- as.numeric(format(min(data$Tempo), "%Y"))
 start_month <- as.numeric(format(min(data$Tempo), "%m"))
 ts_data <- ts(data$IPI, start = c(start_year, start_month), frequency = 12)
@@ -49,7 +49,7 @@ upper_expanding <- numeric(h)
 aic_values_expanding <- numeric(h)
 bic_values_expanding <- numeric(h)
 
-# Ciclo di rolling forecasting
+# Ciclo di rolling forecasting finestra espandibile
 for (i in 1:h) {
   # Finestra espandibile: dati di training fino al tempo t+i-2
   train_end_index <- start_forecast + i - 2
@@ -62,7 +62,7 @@ for (i in 1:h) {
   # Stima del modello ARIMA
   fit <- auto.arima(train_data, seasonal = TRUE, stepwise = TRUE, approximation = TRUE)
   
-  # Previsione del periodo successivo con intervalli di confidenza
+  # Previsione del periodo successivo con intervalli di confidenza del 95 %
   fc <- forecast(fit, h = 1, level = 95)
   
   # Memorizza la previsione e gli intervalli
