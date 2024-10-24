@@ -1,0 +1,88 @@
+# Carica i pacchetti necessari
+library(forecast)
+library(ggplot2)
+library(readxl)
+library(zoo)
+
+# Carica i dati da Excel
+data <- read_excel("D:/Desktop e cose/Desktop/Tesi/PIL_Trasposta.xlsx")  # Assicurati che il percorso e il nome file siano corretti
+
+# Converte la colonna 'Tempo' in formato YearQuarter
+# Supponiamo che 'Tempo' sia nel formato "YYYY-QX", ad esempio "2024-Q1"
+data$Tempo <- as.yearqtr(data$Tempo, format = "%Y-Q%q")  # Utilizza zoo's as.yearqtr
+
+# Assicura che i dati siano ordinati per 'Tempo'
+data <- data[order(data$Tempo), ]
+
+# Crea l'oggetto serie storica con frequenza trimestrale
+start_year <- as.numeric(format(as.Date(data$Tempo[1]), "%Y"))
+start_quarter <- as.numeric(format(as.Date(data$Tempo[1]), "%m")) %/% 4 + 1  # Converti mese in trimestre
+ts_data <- ts(data$PIL, start = c(start_year, start_quarter), frequency = 4)
+
+# Prepara i dati effettivi per il grafico (dal 2022-Q1 in poi)
+ts_data_plot <- window(ts_data, start = c(2022, 1))
+actual_data <- data.frame(
+  Date = as.Date(as.yearqtr(time(ts_data_plot)), frac=1),  # Fine trimestre
+  Value = as.numeric(ts_data_plot),
+  Lower = NA,
+  Upper = NA,
+  Type = "Dati Reali"
+)
+
+# Data di fine training
+train_end_date <- as.yearqtr("2024 Q2")  # 2024-Q2
+
+# Trova l'indice di fine training
+train_end_index <- which(as.yearqtr(time(ts_data)) == train_end_date)
+if (length(train_end_index) == 0) {
+  stop("La data di fine training non è presente nei dati.")
+}
+
+# Estrai i dati di training usando finestra espandibile (tutti i dati fino a train_end_date)
+train_data <- window(ts_data, end = train_end_date)
+
+# Stima del modello ARIMA
+fit_arima <- auto.arima(train_data)
+
+# Previsione dei prossimi 4 trimestri (2024-Q3 a 2025-Q2)
+h <- 4
+fc_arima <- forecast(fit_arima, h = h, level = 95)
+
+# Crea un data frame per la previsione ARIMA
+dates_forecast <- as.Date(as.yearqtr(train_end_date) + seq(1, h)/4, frac=1)  # Fine trimestre
+forecast_forecast_df <- data.frame(
+  Date = dates_forecast,
+  Value = as.numeric(fc_arima$mean),
+  Lower = as.numeric(fc_arima$lower),
+  Upper = as.numeric(fc_arima$upper),
+  Type = "Previsione"
+)
+
+# Combina i dati reali e la previsione per il grafico
+plot_data <- rbind(
+  actual_data,
+  forecast_forecast_df
+)
+
+# Grafico della previsione ARIMA (dal 2022-Q1 in poi)
+ggplot(plot_data, aes(x = Date, y = Value, color = Type)) +
+  geom_line() +
+  geom_ribbon(data = subset(plot_data, Type == "Previsione"), 
+              aes(ymin = Lower, ymax = Upper, fill = Type), 
+              alpha = 0.2, color = NA) +
+  scale_x_date(
+    limits = as.Date(c("2022-01-01", "2025-06-30")),
+    date_breaks = "3 months",
+    labels = function(x) paste0(format(x, "%Y"), "-Q", quarters(x))
+  ) +
+  ggtitle("Previsione PIL con Modello ARIMA (Finestra Espandibile)") +
+  xlab("Trimestre") + 
+  ylab("PIL") +
+  scale_color_manual(values = c("Dati Reali" = "black", "Previsione" = "blue")) +
+  scale_fill_manual(values = c("Previsione" = "blue")) +
+  theme_minimal() +
+  theme(
+    legend.title = element_blank(),
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
+    plot.title = element_text(hjust = 0.5)
+  )
