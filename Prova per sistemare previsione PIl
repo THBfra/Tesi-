@@ -5,7 +5,7 @@ library(readxl)
 library(zoo)
 
 # Carica i dati da Excel
-data <- read_excel("D:/Desktop e cose/Desktop/Tesi/PIL_Trasposta.xlsx")  # Assicurati che il percorso e il nome file siano corretti
+data <- read_excel("/home/0/2020/bortolof/Downloads/PIL_Trasposta.xlsx")  # Assicurati che il percorso e il nome file siano corretti
 
 # Converte la colonna 'Tempo' in formato YearQuarter
 # Supponiamo che 'Tempo' sia nel formato "YYYY-QX", ad esempio "2024-Q1"
