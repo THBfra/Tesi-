@@ -82,7 +82,7 @@ forecast_expanding_df <- data.frame(
   Value = forecasts_expanding,
   Lower = lower_expanding,
   Upper = upper_expanding,
-  Type = "Intervalli di confidenza"
+  Type = "Previsione Rolling"
 )
 
 ### Rolling Forecasting con Finestra a Lunghezza Fissa ###
@@ -137,7 +137,7 @@ forecast_fixed_df <- data.frame(
   Value = forecasts_fixed,
   Lower = lower_fixed,
   Upper = upper_fixed,
-  Type = "Intervalli di confidenza"
+  Type = "Previsione Rolling"
 )
 
 # Combina i dati reali e le previsioni per il grafico (finestra espandibile)
@@ -149,7 +149,7 @@ plot_data_expanding <- rbind(
 # Grafico per la finestra espandibile (dal 2022 in poi)
 ggplot(plot_data_expanding, aes(x = Date, y = Value, color = Type)) +
   geom_line() +
-  geom_ribbon(data = forecast_expanding_df, aes(ymin = Lower, ymax = Upper, fill = Type), alpha = 0.2, color = NA) +
+  geom_ribbon(data = forecast_expanding_df, aes(ymin = Lower, ymax = Upper, fill = "Area di confidenza"), alpha = 0.2, color = NA) +
   scale_x_date(
     limits = as.Date(c("2022-01-01", max(plot_data_expanding$Date))),
     date_breaks = "2 months",
@@ -157,8 +157,8 @@ ggplot(plot_data_expanding, aes(x = Date, y = Value, color = Type)) +
   ) +
   ggtitle("Modello ARIMA con Finestra Espandibile") +
   xlab("Anno") + ylab("Valore Indice") +
-  scale_color_manual(values = c("Dati Reali" = "black", "Intervalli di confidenza" = "blue")) +
-  scale_fill_manual(values = c("Intervalli di confidenza" = "blue")) +
+  scale_color_manual(values = c("Dati Reali" = "black", "Previsione Rolling" = "blue")) +
+  scale_fill_manual(values = c("Area di confidenza" = "blue")) +
   theme(
     legend.title = element_blank(),
     axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
@@ -174,7 +174,7 @@ plot_data_fixed <- rbind(
 # Grafico per la finestra a lunghezza fissa (dal 2022 in poi)
 ggplot(plot_data_fixed, aes(x = Date, y = Value, color = Type)) +
   geom_line() +
-  geom_ribbon(data = forecast_fixed_df, aes(ymin = Lower, ymax = Upper, fill = Type), alpha = 0.2, color = NA) +
+  geom_ribbon(data = forecast_fixed_df, aes(ymin = Lower, ymax = Upper, fill = "Area di confidenza"), alpha = 0.2, color = NA) +
   scale_x_date(
     limits = as.Date(c("2022-01-01", max(plot_data_fixed$Date))),
     date_breaks = "2 months",
@@ -182,8 +182,8 @@ ggplot(plot_data_fixed, aes(x = Date, y = Value, color = Type)) +
   ) +
   ggtitle("Modello ARIMA con Finestra a Lunghezza Fissa") +
   xlab("Anno") + ylab("Valore Indice") +
-  scale_color_manual(values = c("Dati Reali" = "black", "Intervalli di confidenza" = "red")) +
-  scale_fill_manual(values = c("Intervalli di confidenza" = "red")) +
+  scale_color_manual(values = c("Dati Reali" = "black", "Previsione Rolling" = "red")) +
+  scale_fill_manual(values = c("Area di confidenza" = "red")) +
   theme(
     legend.title = element_blank(),
     axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
@@ -226,4 +226,3 @@ info_criteria_fixed <- data.frame(
 )
 print("Criteri Informativi per ARIMA (Finestra a Lunghezza Fissa):")
 print(info_criteria_fixed)
-
