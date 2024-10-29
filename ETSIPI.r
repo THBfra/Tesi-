@@ -94,7 +94,7 @@ plot_data_expanding <- rbind(
 # Grafico per la finestra espandibile (dal 2022 in poi)
 ggplot(plot_data_expanding, aes(x = Date, y = Value, color = Type)) +
   geom_line() +
-  geom_ribbon(data = forecast_expanding_df, aes(ymin = Lower, ymax = Upper, fill = Type), alpha = 0.2, color = NA) +
+  geom_ribbon(data = forecast_expanding_df, aes(ymin = Lower, ymax = Upper, fill = "Area di confidenza"), alpha = 0.2, color = NA) +
   scale_x_date(
     limits = as.Date(c("2022-01-01", max(plot_data_expanding$Date))),
     date_breaks = "2 months",
@@ -103,7 +103,7 @@ ggplot(plot_data_expanding, aes(x = Date, y = Value, color = Type)) +
   ggtitle("Modello ETS con Finestra Espandibile") +
   xlab("Anno") + ylab("Valore Indice") +
   scale_color_manual(values = c("Dati Reali" = "black", "Previsione Rolling" = "blue")) +
-  scale_fill_manual(values = c("Previsione Rolling" = "blue")) +
+  scale_fill_manual(values = c("Area di confidenza" = "blue")) +
   theme(
     legend.title = element_blank(),
     axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
@@ -174,7 +174,7 @@ plot_data_fixed <- rbind(
 # Grafico per la finestra a lunghezza fissa (dal 2022 in poi)
 ggplot(plot_data_fixed, aes(x = Date, y = Value, color = Type)) +
   geom_line() +
-  geom_ribbon(data = forecast_fixed_df, aes(ymin = Lower, ymax = Upper, fill = Type), alpha = 0.2, color = NA) +
+  geom_ribbon(data = forecast_fixed_df, aes(ymin = Lower, ymax = Upper, fill = "Area di confidenza"), alpha = 0.2, color = NA) +
   scale_x_date(
     limits = as.Date(c("2022-01-01", max(plot_data_fixed$Date))),
     date_breaks = "2 months",
@@ -183,12 +183,12 @@ ggplot(plot_data_fixed, aes(x = Date, y = Value, color = Type)) +
   ggtitle("Modello ETS con Finestra a Lunghezza Fissa") +
   xlab("Anno") + ylab("Valore Indice") +
   scale_color_manual(values = c("Dati Reali" = "black", "Previsione Rolling" = "red")) +
-  scale_fill_manual(values = c("Previsione Rolling" = "red")) +
+  scale_fill_manual(values = c("Area di confidenza" = "red")) +
   theme(
     legend.title = element_blank(),
     axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
     plot.title = element_text(hjust = 0.5)
-)
+  )
 
 ### Calcolo degli Indici di Accuratezza ###
 
