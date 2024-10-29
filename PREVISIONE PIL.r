@@ -45,8 +45,17 @@ dati_train <- window(ts_dati, end = time(ts_dati)[fine_stima_index])
 # Stima del modello ARIMA con finestra espandibile
 modello_arima <- auto.arima(dati_train, seasonal = TRUE)
 
-# Previsione per i prossimi 4 trimestri con intervallo di confidenza all'80%
-previsione <- forecast(modello_arima, h = h, level = 80)
+# Previsione per i prossimi 4 trimestri con intervallo di confidenza al 70%
+previsione <- forecast(modello_arima, h = h, level = 70)
+
+# Stampa dei valori attesi, limite inferiore e superiore
+cat("Valori attesi, Limite Inferiore e Superiore:\n")
+print(data.frame(
+    Data = as.character(as.yearqtr(time(previsione$mean))),
+    Valore_Atteso = previsione$mean,
+    Limite_Inferiore = previsione$lower[,1],
+    Limite_Superiore = previsione$upper[,1]
+))
 
 # Crea un data frame per le previsioni
 date_previsione <- as.Date(as.yearqtr(time(previsione$mean)))
@@ -77,7 +86,7 @@ dati_grafico <- rbind(
 ggplot(dati_grafico, aes(x = Data, y = Valore, color = Tipo)) +
     geom_line() +
     geom_point(data = previsioni_df, size = 2) +
-    geom_ribbon(data = previsioni_df, aes(ymin = Inferiore, ymax = Superiore, fill = Tipo), alpha = 0.2, color = NA) +
+    geom_ribbon(data = previsioni_df, aes(ymin = Inferiore, ymax = Superiore, fill = "Area di confidenza"), alpha = 0.2, color = NA) +
     scale_x_date(
         limits = c(as.Date("2018-01-01"), max(dati_grafico$Data) + months(6)),
         date_breaks = "6 months",
@@ -86,11 +95,11 @@ ggplot(dati_grafico, aes(x = Data, y = Valore, color = Tipo)) +
     ggtitle("Previsione del PIL con Modello ARIMA (Finestra Espandibile)") +
     xlab("Anno") + ylab("Valore PIL") +
     scale_color_manual(values = c("Dati Reali" = "black", "Previsione" = "green")) +
-    scale_fill_manual(values = c("Previsione" = "green")) +
+    scale_fill_manual(values = c("Area di confidenza" = "lightgreen")) +
     theme_minimal() +
     theme(
         legend.title = element_blank(),
-        legend.position = "bottom",
+        legend.position = "right",
         axis.text.x = element_text(angle = 45, hjust = 1),
         plot.title = element_text(hjust = 0.5)
     )
