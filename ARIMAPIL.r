@@ -74,7 +74,7 @@ previsioni_espandibile_df <- data.frame(
   Valore = previsioni_espandibile,
   Inferiore = inferiore_espandibile,
   Superiore = superiore_espandibile,
-  Tipo = "Intervalli di confidenza"
+  Tipo = "Previsione Rolling"
 ) %>% 
   mutate(Data = paste0(format(Data, "%Y"), "-Q", quarter(Data)))
 
@@ -114,7 +114,7 @@ previsioni_fissa_df <- data.frame(
   Valore = previsioni_fissa,
   Inferiore = inferiore_fissa,
   Superiore = superiore_fissa,
-  Tipo = "Intervalli di confidenza"
+  Tipo = "Previsione Rolling"
 ) %>% 
   mutate(Data = paste0(format(Data, "%Y"), "-Q", quarter(Data)))
 
@@ -129,11 +129,11 @@ dati_grafico_espandibile <- rbind(
 # Grafico per la finestra espandibile
 ggplot(dati_grafico_espandibile, aes(x = Data, y = Valore, color = Tipo, group = Tipo)) +
   geom_line() +
-  geom_ribbon(data = previsioni_espandibile_df, aes(ymin = Inferiore, ymax = Superiore, fill = Tipo), alpha = 0.2, color = NA) +
+  geom_ribbon(data = previsioni_espandibile_df, aes(ymin = Inferiore, ymax = Superiore, fill = "Area di confidenza"), alpha = 0.2, color = NA) +
   ggtitle("Modello ARIMA con Finestra Espandibile") +
   xlab("Anno") + ylab("Valore PIL") +
-  scale_color_manual(values = c("Dati Reali" = "black", "Intervalli di confidenza" = "blue")) +
-  scale_fill_manual(values = c("Intervalli di confidenza" = "blue")) +
+  scale_color_manual(values = c("Dati Reali" = "black", "Previsione Rolling" = "blue")) +
+  scale_fill_manual(values = c("Area di confidenza" = "blue")) +
   theme_minimal() +
   theme(
     legend.title = element_blank(),
@@ -150,11 +150,11 @@ dati_grafico_fissa <- rbind(
 # Grafico per la finestra a lunghezza fissa
 ggplot(dati_grafico_fissa, aes(x = Data, y = Valore, color = Tipo, group = Tipo)) +
   geom_line() +
-  geom_ribbon(data = previsioni_fissa_df, aes(ymin = Inferiore, ymax = Superiore, fill = Tipo), alpha = 0.2, color = NA) +
+  geom_ribbon(data = previsioni_fissa_df, aes(ymin = Inferiore, ymax = Superiore, fill = "Area di confidenza"), alpha = 0.2, color = NA) +
   ggtitle("Modello ARIMA con Finestra a Lunghezza Fissa") +
   xlab("Anno") + ylab("Valore PIL") +
-  scale_color_manual(values = c("Dati Reali" = "black", "Intervalli di confidenza" = "red")) +
-  scale_fill_manual(values = c("Intervalli di confidenza" = "red")) +
+  scale_color_manual(values = c("Dati Reali" = "black", "Previsione Rolling" = "red")) +
+  scale_fill_manual(values = c("Area di confidenza" = "red")) +
   theme_minimal() +
   theme(
     legend.title = element_blank(),
@@ -192,10 +192,6 @@ criteri_info_fissa <- data.frame(
   Data = date_fissa[1:length(aic_fissa)],
   AIC = aic_fissa,
   BIC = bic_fissa
-)
-print("Criteri Informativi per ARIMA (Finestra a Lunghezza Fissa):")
-print(criteri_info_fissa)
-
 )
 print("Criteri Informativi per ARIMA (Finestra a Lunghezza Fissa):")
 print(criteri_info_fissa)
