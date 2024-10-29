@@ -63,7 +63,7 @@ personal_forecast_df <- data.frame(
   Value = as.numeric(fc_personal$mean),
   Lower = as.numeric(fc_personal$lower),
   Upper = as.numeric(fc_personal$upper),
-  Type = "Previsione"
+  Type = "Intervalli di confidenza previsione"
 )
 
 # Combina i dati reali e la previsione per il grafico
@@ -73,9 +73,11 @@ plot_data <- rbind(
 )
 
 # Grafico della previsione personale (dal 2022 in poi)
-ggplot(plot_data, aes(x = Date, y = Value, color = Type)) +
-  geom_line() +
-  geom_ribbon(data = subset(plot_data, Type == "Previsione"), aes(ymin = Lower, ymax = Upper, fill = Type), alpha = 0.2, color = NA) +
+ggplot(plot_data, aes(x = Date, y = Value)) +
+  geom_line(data = subset(plot_data, Type == "Dati Reali"), aes(color = "Dati Reali")) +
+  geom_line(data = subset(plot_data, Type == "Intervalli di confidenza previsione"), aes(color = "Previsione")) +
+  geom_ribbon(data = subset(plot_data, Type == "Intervalli di confidenza previsione"), aes(ymin = Lower, ymax = Upper, fill = "Area di confidenza"), alpha = 0.2, color = NA) +
+  geom_point(data = personal_forecast_df, aes(x = Date, y = Value), color = "green", size = 1.5) +  # Punto verde per ogni valore atteso
   scale_x_date(
     limits = as.Date(c("2022-01-01", "2025-09-01")),
     date_breaks = "2 months",
@@ -83,11 +85,15 @@ ggplot(plot_data, aes(x = Date, y = Value, color = Type)) +
   ) +
   ggtitle("Previsione IPI con Modello ETS (Finestra a Lunghezza Fissa)") +
   xlab("Anno") + ylab("Valore Indice") +
-  scale_color_manual(values = c("Dati Reali" = "black", "Previsione" = "green")) +
-  scale_fill_manual(values = c("Previsione" = "green")) +
+  scale_color_manual(name = "Legenda", values = c("Dati Reali" = "black", "Previsione" = "green")) +
+  scale_fill_manual(name = "Legenda", values = c("Area di confidenza" = "lightgreen")) +
   theme_minimal() +
   theme(
     legend.title = element_blank(),
     axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
     plot.title = element_text(hjust = 0.5)
   )
+
+# Stampa i valori attesi, lower e upper per ogni mese previsto
+print("Valori attesi, Lower e Upper per ogni mese previsto:")
+print(personal_forecast_df[, c("Date", "Value", "Lower", "Upper")])
