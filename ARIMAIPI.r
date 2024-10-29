@@ -82,7 +82,7 @@ forecast_expanding_df <- data.frame(
   Value = forecasts_expanding,
   Lower = lower_expanding,
   Upper = upper_expanding,
-  Type = "Previsione Rolling"
+  Type = "Intervalli di confidenza"
 )
 
 ### Rolling Forecasting con Finestra a Lunghezza Fissa ###
@@ -137,7 +137,7 @@ forecast_fixed_df <- data.frame(
   Value = forecasts_fixed,
   Lower = lower_fixed,
   Upper = upper_fixed,
-  Type = "Previsione Rolling"
+  Type = "Intervalli di confidenza"
 )
 
 # Combina i dati reali e le previsioni per il grafico (finestra espandibile)
@@ -157,8 +157,8 @@ ggplot(plot_data_expanding, aes(x = Date, y = Value, color = Type)) +
   ) +
   ggtitle("Modello ARIMA con Finestra Espandibile") +
   xlab("Anno") + ylab("Valore Indice") +
-  scale_color_manual(values = c("Dati Reali" = "black", "Previsione Rolling" = "blue")) +
-  scale_fill_manual(values = c("Previsione Rolling" = "blue")) +
+  scale_color_manual(values = c("Dati Reali" = "black", "Intervalli di confidenza" = "blue")) +
+  scale_fill_manual(values = c("Intervalli di confidenza" = "blue")) +
   theme(
     legend.title = element_blank(),
     axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
@@ -182,8 +182,8 @@ ggplot(plot_data_fixed, aes(x = Date, y = Value, color = Type)) +
   ) +
   ggtitle("Modello ARIMA con Finestra a Lunghezza Fissa") +
   xlab("Anno") + ylab("Valore Indice") +
-  scale_color_manual(values = c("Dati Reali" = "black", "Previsione Rolling" = "red")) +
-  scale_fill_manual(values = c("Previsione Rolling" = "red")) +
+  scale_color_manual(values = c("Dati Reali" = "black", "Intervalli di confidenza" = "red")) +
+  scale_fill_manual(values = c("Intervalli di confidenza" = "red")) +
   theme(
     legend.title = element_blank(),
     axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
