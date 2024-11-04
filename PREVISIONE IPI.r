@@ -53,7 +53,7 @@ train_data <- window(ts_data, start = train_start_time, end = train_end_time)
 fit_personal <- ets(train_data)
 
 # Previsione dei prossimi 13 mesi con intervalli di confidenza al 95%
-h <- 13  # Da settembre 2024 a settembre 2025
+h <- 12  # Da settembre 2024 ad agosto 2025
 fc_personal <- forecast(fit_personal, h = h, level = 95)
 
 # Crea un data frame per la previsione personale
